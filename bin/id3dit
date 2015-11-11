@@ -55,7 +55,13 @@ if files.count == 0
 end
 
 if options[:interactive]
-	infos = ID3dit::USED_TAGS.map{ |t| [t, {:value => nil, :is_set => false, :is_mixed => false, :has_changed => false}] }.to_h
+	infos = ID3dit::USED_TAGS.map{ |t|
+		[t, {
+			:value => nil,
+			:is_set => false,
+			:is_mixed => false,
+			:has_changed => false,
+		}] }.to_h
 	
 	files.each do |file|
 		tag = ID3Lib::Tag.new(file)
@@ -82,6 +88,7 @@ if options[:interactive]
 		
 		case res
 		when 'i'
+			puts
 			if files.count >= 2
 				puts "#{files.count} songs selected"
 			end
@@ -98,7 +105,6 @@ if options[:interactive]
 					puts
 				end
 			end
-			
 		when 'e'
 			puts
 			puts 'Type new value for tags. Leave blank for unchanged.'
@@ -121,7 +127,27 @@ if options[:interactive]
 				end
 			end
 		when 'w'
-			puts 'write'
+			puts
+			
+			changed_infos = infos.select{ |tag_name, tag_infos| tag_infos[:has_changed] }
+			if changed_infos.count > 0
+				puts "write #{changed_infos.count} change(s)"
+				files.each do |file|
+					puts "write file '#{file}'"
+					
+					tag = ID3Lib::Tag.new(file)
+					changed_infos.each do |tag_name, tag_infos|
+						tag.send("#{tag_name}=", tag_infos[:value])
+					end
+					tag.update!
+				end
+				
+				changed_infos.each do |tag_name, tag_infos|
+					tag_infos[:has_changed] = false
+				end
+			else
+				puts 'nothing has changed, no file written'
+			end
 		when 'q'
 			puts 'quitting'
 			break
