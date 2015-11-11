@@ -57,7 +57,8 @@ end
 if options[:interactive]
 	infos = ID3dit::USED_TAGS.map{ |t|
 		[t, {
-			:value => nil,
+			:new_value => nil,
+			:original_value => nil,
 			:is_set => false,
 			:is_mixed => false,
 			:has_changed => false,
@@ -71,14 +72,14 @@ if options[:interactive]
 			
 			if tag_infos[:is_set]
 				if !tag_infos[:is_mixed]
-					if field != tag_infos[:value]
+					if field != tag_infos[:new_value]
 						tag_infos[:is_mixed] = true
-						tag_infos[:value] = nil
+						tag_infos[:new_value] = nil
 					end
 				end
 			else
 				tag_infos[:is_set] = true
-				tag_infos[:value] = field
+				tag_infos[:new_value] = tag_infos[:original_value] = field
 			end
 		end
 	end
@@ -95,12 +96,15 @@ if options[:interactive]
 			
 			puts
 			infos.each do |tag_name, tag_infos|
-				if tag_infos[:is_set] && (!tag_infos[:value].nil? || tag_infos[:is_mixed])
+				if tag_infos[:is_set] && (!tag_infos[:new_value].nil? || tag_infos[:is_mixed])
 					printf "%12s    ", tag_name
 					if tag_infos[:is_mixed]
 						print '< Mixed >'
 					else
-						print "'" + Rainbow(tag_infos[:value]).bright + "'"
+						print "'" + Rainbow(tag_infos[:original_value]).bright + "'"
+					end
+					if tag_infos[:has_changed]
+						print "  => '#{tag_infos[:new_value]}'"
 					end
 					puts
 				end
@@ -115,7 +119,7 @@ if options[:interactive]
 				if tag_infos[:is_mixed]
 					print '< Mixed >'
 				else
-					print "'" + Rainbow(tag_infos[:value]).bright + "'"
+					print "'" + Rainbow(tag_infos[:new_value]).bright + "'"
 				end
 				print '  '
 				
@@ -123,7 +127,7 @@ if options[:interactive]
 				if new_val != ''
 					printf "%12s    %s\n", "new #{tag_name}", new_val
 					tag_infos[:has_changed] = true
-					tag_infos[:value] = new_val
+					tag_infos[:new_value] = new_val
 				end
 			end
 		when 'w'
@@ -137,16 +141,17 @@ if options[:interactive]
 					
 					tag = ID3Lib::Tag.new(file)
 					changed_infos.each do |tag_name, tag_infos|
-						tag.send("#{tag_name}=", tag_infos[:value])
+						tag.send("#{tag_name}=", tag_infos[:new_value])
 					end
 					tag.update!
 				end
 				
 				changed_infos.each do |tag_name, tag_infos|
+					tag_infos[:original_value] = tag_infos[:new_value]
 					tag_infos[:has_changed] = false
 				end
 			else
-				puts 'nothing has changed, no file written'
+				puts 'nothing has changed, no file(s) written'
 			end
 		when 'q'
 			puts 'quitting'
