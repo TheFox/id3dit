@@ -149,6 +149,7 @@ if options[:interactive]
 				changed_infos.each do |tag_name, tag_infos|
 					tag_infos[:original_value] = tag_infos[:new_value]
 					tag_infos[:has_changed] = false
+					tag_infos[:is_mixed] = false if tag_infos[:is_mixed]
 				end
 			else
 				puts 'nothing has changed, no file(s) written'
