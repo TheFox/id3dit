@@ -93,14 +93,33 @@ if options[:interactive]
 					if tag_infos[:is_mixed]
 						print '< Mixed >'
 					else
-						print Rainbow(tag_infos[:value]).bright
+						print "'" + Rainbow(tag_infos[:value]).bright + "'"
 					end
 					puts
 				end
 			end
 			
 		when 'e'
-			puts 'edit'
+			puts
+			puts 'Type new value for tags. Leave blank for unchanged.'
+			puts
+			
+			infos.each do |tag_name, tag_infos|
+				printf "%12s    ", tag_name
+				if tag_infos[:is_mixed]
+					print '< Mixed >'
+				else
+					print "'" + Rainbow(tag_infos[:value]).bright + "'"
+				end
+				print '  '
+				
+				new_val = ask('')
+				if new_val != ''
+					printf "%12s    %s\n", "new #{tag_name}", new_val
+					tag_infos[:has_changed] = true
+					tag_infos[:value] = new_val
+				end
+			end
 		when 'w'
 			puts 'write'
 		when 'q'
