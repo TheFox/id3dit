@@ -1,0 +1,127 @@
+#!/usr/bin/env ruby
+# coding: UTF-8
+
+# WHY? WHHHHHYY is there no other solution
+# to load requirements from the project directory?
+Dir.chdir(File.expand_path('..', __dir__)) do
+	require 'bundler/setup'
+	require 'id3lib'
+	require 'highline/import'
+	require 'rainbow'
+end
+
+options = {
+	:interactive => true,
+}
+opts = OptionParser.new do |opts|
+	opts.banner =<<EOB
+ID3 tags editor
+Usage: id3dit [OPTIONS...] FILES...
+EOB
+	
+	opts.separator('')
+	opts.separator('Options:')
+	
+	ID3dit::USED_TAGS.each do |tag_name|
+		opts.on("--#{tag_name} STRING", "Set new value for '#{tag_name}' tag.") do |v|
+			options[:interactive] = false
+			options[tag_name] = v
+		end
+	end
+	
+	opts.on_tail('--version', 'Show version.') do
+		puts "#{ID3dit::NAME} #{ID3dit::VERSION}"
+		puts ID3dit::HOMEPAGE
+		exit
+	end
+	
+	opts.on_tail('-h', '--help', 'Show this message.') do
+		puts opts
+		exit 3
+	end
+end
+
+opts.parse(ARGV)
+
+files = []
+ARGV.each do |arg|
+	if File.exist?(arg)
+		files << arg
+	end
+end
+
+if files.count == 0
+	opts.parse(['-h'])
+end
+
+if options[:interactive]
+	infos = ID3dit::USED_TAGS.map{ |t| [t, {:value => nil, :is_set => false, :is_mixed => false, :has_changed => false}] }.to_h
+	
+	files.each do |file|
+		tag = ID3Lib::Tag.new(file)
+		
+		infos.each do |tag_name, tag_infos|
+			field = tag.send(tag_name)
+			
+			if tag_infos[:is_set]
+				if !tag_infos[:is_mixed]
+					if field != tag_infos[:value]
+						tag_infos[:is_mixed] = true
+						tag_infos[:value] = nil
+					end
+				end
+			else
+				tag_infos[:is_set] = true
+				tag_infos[:value] = field
+			end
+		end
+	end
+	
+	res = 'i'
+	while true
+		
+		case res
+		when 'i'
+			if files.count >= 2
+				puts "#{files.count} songs selected"
+			end
+			
+			puts
+			infos.each do |tag_name, tag_infos|
+				if tag_infos[:is_set] && (!tag_infos[:value].nil? || tag_infos[:is_mixed])
+					printf "%12s    ", tag_name
+					if tag_infos[:is_mixed]
+						print '< Mixed >'
+					else
+						print Rainbow(tag_infos[:value]).bright
+					end
+					puts
+				end
+			end
+			
+		when 'e'
+			puts 'edit'
+		when 'w'
+			puts 'write'
+		when 'q'
+			puts 'quitting'
+			break
+		when '?'
+			puts
+			puts 'i - show all tags'
+			puts 'e - edit all tags'
+			puts 'w - write - after edit, apply changes to the files'
+			puts 'q - quit without saving'
+			puts '? - print help'
+		else
+			puts "WARNING: invalid input. Type '?' for help."
+		end
+		
+		puts
+		res = ask('[iewq?] '){ |q|
+			q.character = true
+		}.downcase
+	end
+else
+	puts 'not interactive'
+end
