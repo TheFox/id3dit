@@ -25,7 +25,7 @@ EOB
 	ID3dit::USED_TAGS.each do |tag_name|
 		opts.on("--#{tag_name} STRING", "Set new value for '#{tag_name}' tag.") do |v|
 			options[:interactive] = false
-			options[tag_name] = v
+			options["tag_#{tag_name}"] = v
 		end
 	end
 	
@@ -173,5 +173,15 @@ if options[:interactive]
 		}.downcase
 	end
 else
-	puts 'not interactive'
+	puts 'write'
+	files.each do |file|
+		puts "write file '#{file}'"
+		
+		tag = ID3Lib::Tag.new(file)
+		options.select{ |n, v| /^tag_/.match(n) }.each do |tag_name, tag_value|
+			name = tag_name.sub(/^tag_/, '')
+			tag.send("#{name}=", tag_value)
+		end
+		tag.update!
+	end
 end
