@@ -25,7 +25,18 @@ EOB
 	ID3dit::USED_TAGS.each do |tag_name|
 		opts.on("--#{tag_name} STRING", "Set new value for '#{tag_name}' tag.") do |v|
 			options[:interactive] = false
-			options["tag_#{tag_name}"] = v
+			options["set_tag_#{tag_name}"] = v
+		end
+	end
+	
+	opts.on('--remove-all', 'Remove all tags.') do |v|
+		options[:interactive] = false
+		options['remove_all_tags'] = true
+	end
+	ID3dit::USED_TAGS.each do |tag_name|
+		opts.on("--remove-#{tag_name}", "Remove '#{tag_name}' tag.") do |v|
+			options[:interactive] = false
+			options["remove_tag_#{tag_name}"] = v
 		end
 	end
 	
@@ -61,6 +72,7 @@ if options[:interactive]
 			:original_value => nil,
 			:is_set => false,
 			:is_mixed => false,
+			:is_removed => false,
 			:has_changed => false,
 		}] }.to_h
 	
@@ -89,25 +101,38 @@ if options[:interactive]
 		
 		case res
 		when 'i'
-			puts
 			if files.count >= 2
-				puts "#{files.count} songs selected"
+				puts
+				puts "#{files.count} songs selected."
 			end
 			
 			puts
-			infos.each do |tag_name, tag_infos|
-				if tag_infos[:is_set] && (!tag_infos[:new_value].nil? || tag_infos[:is_mixed])
-					printf "%12s    ", tag_name
+			if infos.select{ |tag_name, tag_infos|
+				tag_infos[:is_set] && (!tag_infos[:new_value].nil? || tag_infos[:is_mixed])
+				}
+				.count > 0
+				
+				infos.select{ |tag_name, tag_infos|
+					tag_infos[:is_set] && (!tag_infos[:new_value].nil? || tag_infos[:is_mixed])
+					}.each do |tag_name, tag_infos|
+					
+					printf "%15s    ", tag_name
 					if tag_infos[:is_mixed]
 						print '< Mixed >'
 					else
 						print "'" + Rainbow(tag_infos[:original_value]).bright + "'"
 					end
 					if tag_infos[:has_changed]
-						print "  => '#{tag_infos[:new_value]}'"
+						if tag_infos[:is_removed]
+							print "  => remove"
+						else
+							print "  => '#{tag_infos[:new_value]}'"
+						end
 					end
 					puts
 				end
+			else
+				puts 'File(s) contain no ID3 tags.'
 			end
 		when 'e'
 			puts
@@ -115,19 +140,44 @@ if options[:interactive]
 			puts
 			
 			infos.each do |tag_name, tag_infos|
-				printf "%12s    ", tag_name
+				printf "%15s    ", tag_name
 				if tag_infos[:is_mixed]
 					print '< Mixed >'
 				else
 					print "'" + Rainbow(tag_infos[:new_value]).bright + "'"
 				end
-				print '  '
 				
+				print '  >'
 				new_val = ask('')
 				if new_val != ''
-					printf "%12s    %s\n", "new #{tag_name}", new_val
+					printf "%15s    %s\n", "New #{tag_name}", new_val
 					tag_infos[:has_changed] = true
+					tag_infos[:is_removed] = false
 					tag_infos[:new_value] = new_val
+				end
+			end
+		when 'r'
+			puts
+			puts 'Remove tags.'
+			puts
+			
+			infos.select{ |tag_name, tag_infos|
+				tag_infos[:is_set] && (!tag_infos[:new_value].nil? || tag_infos[:is_mixed])
+				}.each do |tag_name, tag_infos|
+				
+				printf "%15s    ", tag_name
+				if tag_infos[:is_mixed]
+					print '< Mixed >'
+				else
+					print "'" + Rainbow(tag_infos[:new_value]).bright + "'"
+				end
+				
+				print '  [yN]? '
+				new_val = ask('').downcase
+				if new_val == 'y'
+					printf "%15s\n", "Remove #{tag_name}"
+					tag_infos[:has_changed] = true
+					tag_infos[:is_removed] = true
 				end
 			end
 		when 'w'
@@ -135,54 +185,83 @@ if options[:interactive]
 			
 			changed_infos = infos.select{ |tag_name, tag_infos| tag_infos[:has_changed] }
 			if changed_infos.count > 0
-				puts "write #{changed_infos.count} change(s)"
+				puts "Write #{changed_infos.count} change(s)."
 				files.each do |file|
-					puts "write file '#{file}'"
+					puts "Write file '#{file}'."
 					
 					tag = ID3Lib::Tag.new(file)
 					changed_infos.each do |tag_name, tag_infos|
-						tag.send("#{tag_name}=", tag_infos[:new_value])
+						new_value = 
+							if tag_infos[:is_removed]
+								nil
+							else
+								tag_infos[:new_value]
+							end
+						
+						tag.send("#{tag_name}=", new_value)
 					end
 					tag.update!
 				end
 				
 				changed_infos.each do |tag_name, tag_infos|
-					tag_infos[:original_value] = tag_infos[:new_value]
+					if tag_infos[:is_removed]
+						tag_infos[:is_removed] = false
+						tag_infos[:is_set] = false
+					else
+						tag_infos[:original_value] = tag_infos[:new_value]
+					end
+					
 					tag_infos[:has_changed] = false
 					tag_infos[:is_mixed] = false if tag_infos[:is_mixed]
 				end
 			else
-				puts 'nothing has changed, no file(s) written'
+				puts 'Nothing has changed, no file(s) written.'
 			end
 		when 'q'
 			puts 'quitting'
 			break
 		when '?'
 			puts
-			puts 'i - show all tags'
-			puts 'e - edit all tags'
-			puts 'w - write - after edit, apply changes to the files'
-			puts 'q - quit without saving'
-			puts '? - print help'
+			puts 'i - show all tags.'
+			puts 'e - edit all tags.'
+			puts 'r - remove tags.'
+			puts 'w - write - after edit, apply changes to the files.'
+			puts 'q - quit without saving.'
+			puts '? - print help.'
 		else
 			puts "WARNING: invalid input. Type '?' for help."
 		end
 		
 		puts
-		res = ask('[iewq?] '){ |q|
+		res = ask('[ierwq?] '){ |q|
 			q.character = true
 		}.downcase
 	end
 else
-	puts 'write'
 	files.each do |file|
-		puts "write file '#{file}'"
+		puts "Check file '#{file}'."
 		
+		changed = false
 		tag = ID3Lib::Tag.new(file)
-		options.select{ |n, v| /^tag_/.match(n) }.each do |tag_name, tag_value|
-			name = tag_name.sub(/^tag_/, '')
+		options.select{ |tag_name, tag_value| /^set_tag_/.match(tag_name) }.each do |tag_name, tag_value|
+			name = tag_name.sub(/^set_tag_/, '')
 			tag.send("#{name}=", tag_value)
 		end
-		tag.update!
+		if options.has_key?('remove_all_tags')
+			tag.delete_if{ true }
+		else
+			options.select{ |tag_name, tag_value| /^remove_tag_/.match(tag_name) }.each do |tag_name, tag_value|
+				name = tag_name.sub(/^remove_tag_/, '')
+				val = tag.send("#{name}")
+				if !val.nil?
+					tag.send("#{name}=", nil)
+					changed = true
+				end
+			end
+		end
+		if changed
+			puts "Write file '#{file}'."
+			tag.update!
+		end
 	end
 end
