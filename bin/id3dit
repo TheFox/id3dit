@@ -96,10 +96,9 @@ if options[:interactive]
 		end
 	end
 	
-	res = 'i'
+	actions = ['i']
 	while true
-		
-		case res
+		case actions.pop
 		when 'i'
 			puts
 			if files.count >= 2
@@ -217,6 +216,9 @@ if options[:interactive]
 					tag_infos[:is_removed] = true
 				end
 			end
+		when 'x'
+			actions << 'q'
+			actions << 'w'
 		when 'w'
 			puts
 			
@@ -255,13 +257,14 @@ if options[:interactive]
 				puts 'Nothing has changed, no file(s) written.'
 			end
 		when 'q'
-			puts 'quitting'
+			puts 'Quitting.'
 			break
 		when '?'
 			puts
 			puts 'i - show all tags.'
 			puts 'e - edit all tags.'
 			puts 'r - remove tags.'
+			puts 'x - same as wq.'
 			puts 'w - write - after edit, apply changes to the files.'
 			puts 'q - quit without saving.'
 			puts '? - print help.'
@@ -269,8 +272,10 @@ if options[:interactive]
 			puts "WARNING: invalid input. Type '?' for help."
 		end
 		
+		next if actions.count > 0
+		
 		puts
-		res = ask('[ierwq?] '){ |q|
+		actions << ask('[ierxwq?] '){ |q|
 			q.character = true
 		}.downcase
 	end
