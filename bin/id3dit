@@ -208,8 +208,8 @@ if options[:interactive]
 				end
 				
 				print '  [yN]? '
-				new_val = ask('').downcase
-				if new_val == 'y'
+				res = ask('').downcase
+				if res == 'y' || res == 'r'
 					printf "%15s\n", "Remove #{tag_name}"
 					tag_infos[:has_changed] = true
 					tag_infos[:is_removed] = true
