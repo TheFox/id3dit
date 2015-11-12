@@ -162,7 +162,7 @@ if options[:interactive]
 			puts
 			
 			infos.select{ |tag_name, tag_infos|
-				tag_infos[:is_set] && (!tag_infos[:new_value].nil? || tag_infos[:is_mixed])
+				tag_infos[:is_set] && (!tag_infos[:new_value].nil? || tag_infos[:is_mixed]) && !tag_infos[:is_removed]
 				}.each do |tag_name, tag_infos|
 				
 				printf "%15s    ", tag_name
