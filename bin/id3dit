@@ -246,6 +246,7 @@ else
 		options.select{ |tag_name, tag_value| /^set_tag_/.match(tag_name) }.each do |tag_name, tag_value|
 			name = tag_name.sub(/^set_tag_/, '')
 			tag.send("#{name}=", tag_value)
+			changed = true
 		end
 		if options.has_key?('remove_all_tags')
 			tag.delete_if{ true }
