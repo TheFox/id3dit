@@ -101,9 +101,11 @@ if options[:interactive]
 		
 		case res
 		when 'i'
+			puts
 			if files.count >= 2
-				puts
 				puts "#{files.count} songs selected."
+			else
+				puts "File '#{files.first}'."
 			end
 			
 			puts
