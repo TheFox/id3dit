@@ -15,7 +15,7 @@ options = {
 }
 opts = OptionParser.new do |opts|
 	opts.banner =<<EOB
-ID3 tags editor
+#{ID3dit::NAME} #{ID3dit::VERSION}
 Usage: id3dit [OPTIONS...] FILES...
 EOB
 	
@@ -66,6 +66,8 @@ if files.count == 0
 end
 
 if options[:interactive]
+	puts "#{ID3dit::NAME} #{ID3dit::VERSION}"
+	
 	infos = ID3dit::USED_TAGS.map{ |t|
 		[t, {
 			:new_value => nil,
@@ -142,7 +144,7 @@ if options[:interactive]
 			
 			has_set_tags = false
 			infos.select{ |tag_name, tag_infos|
-				!tag_infos[:original_value].nil? || tag_infos[:has_changed]
+				(!tag_infos[:original_value].nil? || tag_infos[:has_changed]) && !tag_infos[:is_removed]
 				}.each do |tag_name, tag_infos|
 				has_set_tags = true
 				
