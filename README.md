@@ -4,6 +4,8 @@
 
 ## Usage
 
+Video: <https://asciinema.org/a/a3tt619cc1r529av8skskgz5w>
+
 ### Print Help
 
 	id3dit -h
