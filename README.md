@@ -2,6 +2,10 @@
 
 [ID3](https://en.wikipedia.org/wiki/ID3) tags editor for the command line written in Ruby.
 
+![](examples/id3dit_20151116_143921.png)
+
+![](examples/id3dit_20151116_144224.png)
+
 ## Usage
 
 Video: <https://asciinema.org/a/a3tt619cc1r529av8skskgz5w>
