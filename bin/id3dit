@@ -29,7 +29,7 @@ EOB
 		end
 	end
 	
-	opts.on('--remove-all', 'Remove all tags.') do |v|
+	opts.on('-r', '--remove-all', 'Remove all tags.') do |v|
 		options[:interactive] = false
 		options['remove_all_tags'] = true
 	end
