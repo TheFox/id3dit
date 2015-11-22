@@ -158,7 +158,7 @@ if options[:interactive]
 				print '  >'
 				new_val = ask('')
 				if new_val != ''
-					printf "%15s    %s\n", "New #{tag_name}", new_val
+					printf "%15s    '%s'\n", "New #{tag_name}", new_val
 					tag_infos[:has_changed] = true
 					tag_infos[:is_removed] = false
 					tag_infos[:new_value] = new_val
