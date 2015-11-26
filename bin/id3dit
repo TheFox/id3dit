@@ -139,10 +139,13 @@ if options[:interactive]
 			end
 		when 'e'
 			puts
-			puts 'Type new value for tags. Leave blank for unchanged.'
+			puts 'Type new value for tags.'
+			puts '- Leave blank for unchanged.'
+			puts '- Leave input prematurely with "#".'
 			puts
 			
 			has_set_tags = false
+			pre_break = false
 			infos.select{ |tag_name, tag_infos|
 				(!tag_infos[:original_value].nil? || tag_infos[:has_changed]) && !tag_infos[:is_removed]
 				}.each do |tag_name, tag_infos|
@@ -158,6 +161,11 @@ if options[:interactive]
 				print '  >'
 				new_val = ask('')
 				if new_val != ''
+					if new_val == '#'
+						pre_break = true
+						puts 'break'
+						break
+					end
 					printf "%15s    '%s'\n", "New #{tag_name}", new_val
 					tag_infos[:has_changed] = true
 					tag_infos[:is_removed] = false
@@ -167,12 +175,14 @@ if options[:interactive]
 			
 			show_unset_tags = false
 			if has_set_tags
-				puts
-				res = ask('Edit more tags? [yn] ') do |q|
-					q.default = 'n'
-				end.downcase
-				if res == 'y'
-					show_unset_tags = true
+				if !pre_break
+					puts
+					res = ask('Edit more tags? [yn] ') do |q|
+						q.default = 'n'
+					end.downcase
+					if res == 'y'
+						show_unset_tags = true
+					end
 				end
 			else
 				show_unset_tags = true
@@ -187,6 +197,11 @@ if options[:interactive]
 					printf "%15s    ''  >", tag_name
 					new_val = ask('')
 					if new_val != ''
+						if new_val == '#'
+							pre_break = true
+							puts 'break'
+							break
+						end
 						printf "%15s    '%s'\n", "New #{tag_name}", new_val
 						tag_infos[:has_changed] = true
 						tag_infos[:is_removed] = false
@@ -210,12 +225,14 @@ if options[:interactive]
 					print "'" + Rainbow(tag_infos[:new_value]).bright + "'"
 				end
 				
-				print '  [yN]? '
+				print '  [yN#]? '
 				res = ask('').downcase
 				if res == 'y' || res == 'r'
 					printf "%15s\n", "Remove #{tag_name}"
 					tag_infos[:has_changed] = true
 					tag_infos[:is_removed] = true
+				elsif res == '#'
+					break
 				end
 			end
 		when 'x'
