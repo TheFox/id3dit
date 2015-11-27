@@ -263,14 +263,18 @@ if options[:interactive]
 				
 				changed_infos.each do |tag_name, tag_infos|
 					if tag_infos[:is_removed]
-						tag_infos[:is_removed] = false
 						tag_infos[:is_set] = false
 					else
 						tag_infos[:original_value] = tag_infos[:new_value]
 					end
 					
+					# Set tag infos to default.
+					tag_infos[:new_value] = nil
+					# tag_infos[:original_value] = nil
+					# tag_infos[:is_set] = false
+					tag_infos[:is_mixed] = false
+					tag_infos[:is_removed] = false
 					tag_infos[:has_changed] = false
-					tag_infos[:is_mixed] = false if tag_infos[:is_mixed]
 				end
 			else
 				puts 'Nothing has changed, no file(s) written.'
