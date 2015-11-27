@@ -1,7 +1,7 @@
 
 module ID3dit
 	NAME = 'ID3dit'
-	VERSION = '1.1.0-dev4'
+	VERSION = '1.1.0-dev5'
 	HOMEPAGE = 'https://github.com/TheFox/id3dit'
 	USED_TAGS = {
 		:title => {:id => :TIT2},
