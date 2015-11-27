@@ -168,7 +168,7 @@ if options[:interactive]
 		when 'r'
 			puts
 			puts 'Remove tags.'
-			puts '- Default is no.'
+			puts '- Default is no on non-empty fields.'
 			puts '- Leave input prematurely with "#".'
 			puts
 			
@@ -180,8 +180,21 @@ if options[:interactive]
 					print "'" + Rainbow(tag_infos[:new_value].nil? ? tag_infos[:old_value] : tag_infos[:new_value]).bright + "'"
 				end
 				
-				print '  [yN#]? '
+				print '  ['
+				default_v = 'n'
+				if !tag_infos[:old_value].nil? && tag_infos[:old_value] != '' ||
+					!tag_infos[:new_value].nil? && tag_infos[:new_value] != ''
+					print 'yN'
+				else
+					print 'Yn'
+					default_v = 'y'
+				end
+				print '#]? '
+				
 				res = ask('').downcase
+				if res == ''
+					res = default_v
+				end
 				if res == 'y' || res == 'r'
 					printf "%15s\n", "Remove #{tag_name}"
 					tags.delete(tag_name)
