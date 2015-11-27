@@ -22,8 +22,8 @@ EOB
 	opts.separator('')
 	opts.separator('Options:')
 	
-	ID3dit::USED_TAGS.each do |tag_name|
-		opts.on("--#{tag_name} STRING", "Set new value for '#{tag_name}' tag.") do |v|
+	ID3dit::USED_TAGS.each do |tag_name, tag|
+		opts.on("--#{tag_name} STRING", "Set new value for '#{tag_name}' tag. (#{tag[:id]})") do |v|
 			options[:interactive] = false
 			options["set_tag_#{tag_name}"] = v
 		end
@@ -33,8 +33,8 @@ EOB
 		options[:interactive] = false
 		options['remove_all_tags'] = true
 	end
-	ID3dit::USED_TAGS.each do |tag_name|
-		opts.on("--remove-#{tag_name}", "Remove '#{tag_name}' tag.") do |v|
+	ID3dit::USED_TAGS.each do |tag_name, tag|
+		opts.on("--remove-#{tag_name}", "Remove '#{tag_name}' tag. (#{tag[:id]})") do |v|
 			options[:interactive] = false
 			options["remove_tag_#{tag_name}"] = v
 		end
@@ -68,8 +68,8 @@ end
 if options[:interactive]
 	puts "#{ID3dit::NAME} #{ID3dit::VERSION}"
 	
-	infos = ID3dit::USED_TAGS.map{ |t|
-		[t, {
+	infos = ID3dit::USED_TAGS.map{ |tag_name, tag|
+		[tag_name, {
 			:new_value => nil,
 			:original_value => nil,
 			:is_set => false,
@@ -249,14 +249,12 @@ if options[:interactive]
 					
 					tag = ID3Lib::Tag.new(file)
 					changed_infos.each do |tag_name, tag_infos|
-						new_value = 
-							if tag_infos[:is_removed]
-								nil
-							else
-								tag_infos[:new_value]
-							end
-						
-						tag.send("#{tag_name}=", new_value)
+						if tag_infos[:is_removed]
+							used_tag = ID3dit::USED_TAGS[tag_name]
+							tag.delete_if{ |frame| frame[:id] == used_tag[:id] }
+						else
+							tag.send("#{tag_name}=", tag_infos[:new_value])
+						end
 					end
 					tag.update!
 				end
@@ -319,11 +317,11 @@ else
 		else
 			options.select{ |tag_name, tag_value| /^remove_tag_/.match(tag_name) }.each do |tag_name, tag_value|
 				name = tag_name.sub(/^remove_tag_/, '')
-				val = tag.send("#{name}")
-				if !val.nil?
-					tag.send("#{name}=", nil)
-					changed = true
-				end
+				used_tag = ID3dit::USED_TAGS[name.to_sym]
+				count = tag.count
+				tag.delete_if{ |frame| frame[:id] == used_tag[:id] }
+				
+				changed = true if tag.count < count
 			end
 		end
 		if changed
