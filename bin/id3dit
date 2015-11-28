@@ -183,7 +183,8 @@ if options[:interactive]
 				print '  ['
 				default_v = 'n'
 				if !tag_infos[:old_value].nil? && tag_infos[:old_value] != '' ||
-					!tag_infos[:new_value].nil? && tag_infos[:new_value] != ''
+					!tag_infos[:new_value].nil? && tag_infos[:new_value] != '' ||
+					tag_infos[:is_mixed]
 					print 'yN'
 				else
 					print 'Yn'
