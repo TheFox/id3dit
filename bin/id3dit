@@ -124,7 +124,7 @@ if options[:interactive]
 				end
 				
 				print '  >'
-				new_val = ask('')
+				new_val = ask('').strip
 				if new_val != ''
 					if new_val == '#'
 						pre_break = true
@@ -140,7 +140,7 @@ if options[:interactive]
 			if has_set_tags
 				if !pre_break
 					puts
-					res = ask('Edit more tags? [yN] ').downcase
+					res = ask('Edit more tags? [yN] ').strip.downcase
 					if res == 'y'
 						show_unset_tags = true
 					end
@@ -153,7 +153,7 @@ if options[:interactive]
 				puts
 				tags.are_for_further_edit.each do |tag_name, tag_infos|
 					printf "%15s    ''  >", tag_name
-					new_val = ask('')
+					new_val = ask('').strip
 					if new_val != ''
 						if new_val == '#'
 							pre_break = true
@@ -191,7 +191,7 @@ if options[:interactive]
 				end
 				print '#]? '
 				
-				res = ask('').downcase
+				res = ask('').strip.downcase
 				if res == ''
 					res = default_v
 				end
