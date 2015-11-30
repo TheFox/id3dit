@@ -70,7 +70,6 @@ if options[:interactive]
 	puts "#{ID3dit::NAME} #{ID3dit::VERSION}"
 	
 	tags = ID3dit::Tags.new(files.map{ |file| ID3Lib::Tag.new(file) })
-	puts "test #{tags['test123']}"
 	
 	actions = ['i']
 	while true
