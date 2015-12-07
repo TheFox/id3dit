@@ -2,8 +2,8 @@
 	"folders":[
 		{
 			"path": ".",
-			"name": "Pastebin",
-			"folder_exclude_patterns": [ "vendor" ],
+			"name": "ID3dit",
+			"folder_exclude_patterns": [ ],
 			"file_exclude_patterns": [ ]
 		}
 	]

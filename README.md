@@ -6,6 +6,17 @@
 
 ![](examples/id3dit_20151116_144224.png)
 
+## Install
+
+The preferred method of installation is via RubyGems.org:  
+<https://rubygems.org/gems/id3dit>
+
+	gem install id3dit
+
+or via `Gemfile`:
+
+	gem 'id3dit', '~>1.1'
+
 ## Usage
 
 Video: <https://asciinema.org/a/a3tt619cc1r529av8skskgz5w>

@@ -1,25 +1,18 @@
 #!/usr/bin/env ruby
 # coding: UTF-8
 
-# WHY? WHHHHHYY is there no other solution
-# to load requirements from the project directory?
-Dir.chdir(File.expand_path('..', __dir__)) do
-	require 'bundler/setup'
-	require 'id3lib'
-	require 'highline/import'
-	require 'rainbow'
-	require 'id3dit'
-end
+require 'bundler/setup'
+require 'id3lib'
+require 'highline/import'
+require 'rainbow'
+require 'id3dit'
+
 
 options = {
 	:interactive => true,
 }
 opts = OptionParser.new do |opts|
-	opts.banner =<<EOB
-#{ID3dit::NAME} #{ID3dit::VERSION}
-Usage: id3dit [OPTIONS...] FILES...
-EOB
-	
+	opts.banner = 'Usage: id3dit [OPTIONS...] FILES...'
 	opts.separator('')
 	opts.separator('Options:')
 	
@@ -42,7 +35,7 @@ EOB
 	end
 	
 	opts.on_tail('--version', 'Show version.') do
-		puts "#{ID3dit::NAME} #{ID3dit::VERSION}"
+		puts "ID3dit #{ID3dit::VERSION}"
 		puts ID3dit::HOMEPAGE
 		exit
 	end
@@ -67,7 +60,7 @@ if files.count == 0
 end
 
 if options[:interactive]
-	puts "#{ID3dit::NAME} #{ID3dit::VERSION}"
+	puts "ID3dit #{ID3dit::VERSION}"
 	
 	tags = ID3dit::Tags.new(files.map{ |file| ID3Lib::Tag.new(file) })
 	

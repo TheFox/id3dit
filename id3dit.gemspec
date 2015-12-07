@@ -2,16 +2,19 @@
 
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+
 require 'id3dit/version'
 
 Gem::Specification.new do |spec|
 	spec.name          = 'id3dit'
 	spec.version       = ID3dit::VERSION
+	spec.date          = ID3dit::DATE
 	spec.author        = 'Christian Mayer'
 	spec.email         = 'christian@fox21.at'
 	
-	spec.summary       = %q{ID3 tags editor for the command line written in Ruby.}
-	spec.homepage      = 'https://github.com/TheFox/id3dit'
+	spec.summary       = %q{ID3 Tags Editor}
+	spec.description   = %q{ID3 tags editor for the command line written in Ruby.}
+	spec.homepage      = ID3dit::HOMEPAGE
 	spec.license       = 'GPL-3.0'
 	
 	spec.files         = `git ls-files -z`.split("\x0").reject{ |f| f.match(%r{^(test|spec|features)/}) }
