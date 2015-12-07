@@ -1,2 +1,3 @@
-CHANGELOG-*.txt
 .setup
+CHANGELOG-*.txt
+/releases/
