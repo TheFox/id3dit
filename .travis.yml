@@ -13,4 +13,3 @@ before_install:
 script:
     - make test
     - make install
-    - id3dit --version
