@@ -1,6 +1,6 @@
 
 module ID3dit
-	VERSION = '1.1.1-dev'
+	VERSION = '1.1.1'
 	DATE = '2015-12-21'
 	HOMEPAGE = 'https://github.com/TheFox/id3dit'
 	USED_TAGS = {
