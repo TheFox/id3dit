@@ -11,7 +11,8 @@ before_install:
     - bundler --version
 install:
     - make
-    - gem install id3dit
+    - gem build id3dit.gemspec
+    - gem install id3dit-*.gem
     - gem list -l id3dit
 script:
     - make test
