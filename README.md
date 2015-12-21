@@ -52,6 +52,11 @@ Video: <https://asciinema.org/a/a3tt619cc1r529av8skskgz5w>
 - `id3dit --remove-comment track01.mp3 track02.mp3`
 - `id3dit --remove-disc --remove-track track01.mp3 track02.mp3`
 
+## Project Links
+
+- [Gem](https://rubygems.org/gems/id3dit)
+- [Travis CI Repository](https://travis-ci.org/TheFox/id3dit)
+
 ## License
 Copyright (C) 2015 Christian Mayer <http://fox21.at>
 
