@@ -3,6 +3,11 @@ rvm:
     - 2.1
     - 2.2
 before_install: 
-    - ruby --version
+    - sudo apt-get update -qq
+    - sudo apt-get install -y libid3-dev
+    - bundler --version
+    - gem update --system
+    - gem install bundler -v '~>1.11'
+    - bundler --version
 script:
     - make test
