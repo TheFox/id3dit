@@ -5,4 +5,4 @@ include Makefile.common
 
 .PHONY: test
 test:
-	$(BUNDLER) exec ./bin/id3dit
+	$(BUNDLER) exec ./bin/id3dit; [ $$? -eq 3 ]
