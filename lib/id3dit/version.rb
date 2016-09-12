@@ -1,8 +1,9 @@
 
 module ID3dit
-	VERSION = '1.1.2'
-	DATE = '2015-12-21'
+	VERSION = '1.2.0-dev'
+	DATE = '2016-09-12'
 	HOMEPAGE = 'https://github.com/TheFox/id3dit'
+	
 	USED_TAGS = {
 		:title => {:id => :TIT2},
 		:artist => {:id => :TPE1},
