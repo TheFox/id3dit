@@ -23,7 +23,7 @@ Gem::Specification.new do |spec|
 	spec.require_paths = ['lib']
 	spec.required_ruby_version = '>=1.9.0'
 	
-	spec.add_dependency 'id3lib-ruby', '~>0.6'
-	spec.add_dependency 'highline', '~>1.7'
-	spec.add_dependency 'rainbow', '~>2.0'
+	spec.add_runtime_dependency 'id3lib-ruby', '~>0.6'
+	spec.add_runtime_dependency 'highline', '~>1.7'
+	spec.add_runtime_dependency 'rainbow', '~>2.0'
 end
