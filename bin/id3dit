@@ -10,37 +10,37 @@ require 'id3dit'
 options = {
 	:interactive => true,
 }
-opts = OptionParser.new do |opts|
-	opts.banner = 'Usage: id3dit [OPTIONS...] FILES...'
-	opts.separator('')
-	opts.separator('Options:')
+opts = OptionParser.new do |o|
+	o.banner = 'Usage: id3dit [OPTIONS...] FILES...'
+	o.separator('')
+	o.separator('Options:')
 	
 	ID3dit::USED_TAGS.each do |tag_name, tag|
-		opts.on("--#{tag_name} STRING", "Set new value for '#{tag_name}' tag. (#{tag[:id]})") do |v|
+		o.on("--#{tag_name} STRING", "Set new value for '#{tag_name}' tag. (#{tag[:id]})") do |v|
 			options[:interactive] = false
 			options["set_tag_#{tag_name}"] = v
 		end
 	end
 	
-	opts.on('-r', '--remove-all', 'Remove all tags.') do |v|
+	o.on('-r', '--remove-all', 'Remove all tags.') do |v|
 		options[:interactive] = false
 		options['remove_all_tags'] = true
 	end
 	ID3dit::USED_TAGS.each do |tag_name, tag|
-		opts.on("--remove-#{tag_name}", "Remove '#{tag_name}' tag. (#{tag[:id]})") do |v|
+		o.on("--remove-#{tag_name}", "Remove '#{tag_name}' tag. (#{tag[:id]})") do |v|
 			options[:interactive] = false
 			options["remove_tag_#{tag_name}"] = v
 		end
 	end
 	
-	opts.on_tail('--version', 'Show version.') do
+	o.on_tail('--version', 'Show version.') do
 		puts "ID3dit #{ID3dit::VERSION}"
 		puts ID3dit::HOMEPAGE
 		exit
 	end
 	
-	opts.on_tail('-h', '--help', 'Show this message.') do
-		puts opts
+	o.on_tail('-h', '--help', 'Show this message.') do
+		puts o
 		exit 3
 	end
 end
