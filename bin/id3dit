@@ -111,7 +111,7 @@ if options[:interactive]
 				if tag_infos[:is_mixed]
 					print '< Mixed >'
 				else
-					print "'" + Rainbow(tag_infos[:new_value].nil? ? tag_infos[:old_value] : tag_infos[:new_value]).bright + "'"
+					print "'" << Rainbow(tag_infos[:new_value].nil? ? tag_infos[:old_value] : tag_infos[:new_value]).bright << "'"
 				end
 				
 				print '  >'
@@ -168,7 +168,7 @@ if options[:interactive]
 				if tag_infos[:is_mixed]
 					print '< Mixed >'
 				else
-					print "'" + Rainbow(tag_infos[:new_value].nil? ? tag_infos[:old_value] : tag_infos[:new_value]).bright + "'"
+					print "'" << Rainbow(tag_infos[:new_value].nil? ? tag_infos[:old_value] : tag_infos[:new_value]).bright << "'"
 				end
 				
 				print '  ['

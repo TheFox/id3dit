@@ -4,6 +4,7 @@ require 'id3dit/version'
 module ID3dit
 	
 	class Tags < Hash
+		
 		attr_accessor :raw
 		
 		def initialize(tags)
