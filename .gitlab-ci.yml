@@ -1,7 +1,6 @@
 before_script:
     - apt-get update -yqq
     - apt-get install libid3-dev -yqq --force-yes
-    - ruby -v
     - gem update --system
     - gem install bundler -v '~>1.13'
     - bundler --version
@@ -16,7 +15,7 @@ test_19:
     stage: test
     environment: test
     only:
-        - master
+        - tags
     script:
         - make test
 
@@ -25,7 +24,7 @@ test_20:
     stage: test
     environment: test
     only:
-        - master
+        - tags
     script:
         - make test
 
@@ -34,7 +33,7 @@ test_21:
     stage: test
     environment: test
     only:
-        - master
+        - tags
     script:
         - make test
 
@@ -43,7 +42,7 @@ test_22:
     stage: test
     environment: test
     only:
-        - master
+        - tags
     script:
         - make test
 
@@ -52,14 +51,14 @@ test_23:
     stage: test
     environment: test
     only:
-        - master
+        - tags
     script:
         - make test
 
 release_gem:
     image: ruby:2.3
     stage: release
-    environment: release
+    environment: gem
     only:
         - tags
     script:
