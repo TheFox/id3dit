@@ -15,7 +15,7 @@ Gem::Specification.new do |spec|
 	spec.summary       = %q{ID3 Tags Editor}
 	spec.description   = %q{ID3 tags editor for the command line written in Ruby.}
 	spec.homepage      = ID3dit::HOMEPAGE
-	spec.license       = 'GPL-3.0'
+	spec.license       = 'MIT'
 	
 	spec.files         = `git ls-files -z`.split("\x0").reject{ |f| f.match(%r{^(test|spec|features)/}) }
 	spec.bindir        = 'bin'
