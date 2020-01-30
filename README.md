@@ -11,11 +11,15 @@
 The preferred method of installation is via RubyGems.org:  
 <https://rubygems.org/gems/id3dit>
 
-	gem install id3dit
+```bash
+gem install id3dit
+```
 
 or via `Gemfile`:
 
-	gem 'id3dit', '~>1.1'
+```ruby
+gem 'id3dit', '~>1.1'
+```
 
 ## Usage
 
@@ -23,23 +27,33 @@ Video: <https://asciinema.org/a/a3tt619cc1r529av8skskgz5w>
 
 ### Print Help
 
-	id3dit -h
+```bash
+id3dit -h
+```
 
 ### Interactive Mode
 
-	id3dit FILES...
+```bash
+id3dit FILES...
+```
 
 ### Set Tag
 
-	id3dit --artist STRING FILES...
+```bash
+id3dit --artist STRING FILES...
+```
 
 ### Remove All Tags
 
-	id3dit --remove-all FILES...
+```bash
+id3dit --remove-all FILES...
+```
 
 ### Remove a Tag
 
-	id3dit --remove-comment FILES...
+```bash
+id3dit --remove-comment FILES...
+```
 
 ### Examples
 
