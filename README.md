@@ -55,7 +55,6 @@ Video: <https://asciinema.org/a/a3tt619cc1r529av8skskgz5w>
 ## Project Links
 
 - [Gem](https://rubygems.org/gems/id3dit)
-- [Travis CI Repository](https://travis-ci.org/TheFox/id3dit)
 
 ## License
 
